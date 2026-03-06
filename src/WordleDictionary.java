@@ -17,18 +17,37 @@ public record WordleDictionary(List<String> words) {
 
     public static String compareWords(String answer, String guess) {
 
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder("-----");
 
+        boolean[] used = new boolean[answer.length()];
+
+        // сначала ищем точные совпадения
         for (int i = 0; i < guess.length(); i++) {
+
+            if (guess.charAt(i) == answer.charAt(i)) {
+
+                result.setCharAt(i, '+');
+                used[i] = true;
+            }
+        }
+
+        // затем ищем буквы на других позициях
+        for (int i = 0; i < guess.length(); i++) {
+
+            if (result.charAt(i) == '+') {
+                continue;
+            }
 
             char g = guess.charAt(i);
 
-            if (g == answer.charAt(i)) {
-                result.append("+");
-            } else if (answer.indexOf(g) >= 0) {
-                result.append("^");
-            } else {
-                result.append("-");
+            for (int j = 0; j < answer.length(); j++) {
+
+                if (!used[j] && answer.charAt(j) == g) {
+
+                    result.setCharAt(i, '^');
+                    used[j] = true;
+                    break;
+                }
             }
         }
 

@@ -10,12 +10,15 @@ public class WordleGame {
     private int attempts = 6;
 
     public WordleGame(WordleDictionary dictionary, PrintWriter log) {
+
         this.dictionary = dictionary;
 
-        Random random = new Random();
         List<String> words = dictionary.words();
+        Random random = new Random();
 
         this.answer = words.get(random.nextInt(words.size()));
+
+        log.println("Ответ игры: " + answer);
     }
 
     public boolean isFinished() {

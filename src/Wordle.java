@@ -20,18 +20,30 @@ void main() {
             }
 
             try {
+
                 String result = game.makeTurn(input);
                 IO.println(result);
+
             } catch (WordNotFoundInDictionary e) {
-                IO.println("Слово отсутствует в словаре");
+
+                IO.println("Слова нет в словаре");
+                log.println("Игрок ввёл слово вне словаря: " + input);
+
             } catch (InvalidWordException e) {
+
                 IO.println("Слово должно состоять из 5 букв");
+                log.println("Некорректная длина слова: " + input);
             }
         }
 
-        IO.println("Загаданное слово: " + game.getAnswer());
+        IO.println("Игра окончена. Загаданное слово: " + game.getAnswer());
 
     } catch (Exception e) {
-        e.printStackTrace();
+
+        try (PrintWriter log = new PrintWriter("wordle.log")) {
+            log.println("Критическая ошибка программы:");
+            e.printStackTrace(log);
+        } catch (Exception ignored) {
+        }
     }
 }

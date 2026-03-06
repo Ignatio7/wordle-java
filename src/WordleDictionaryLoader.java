@@ -4,10 +4,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WordleDictionaryLoader {
-
-    public WordleDictionaryLoader(PrintWriter log) {
-    }
+public record WordleDictionaryLoader(PrintWriter log) {
 
     public WordleDictionary load(String filename) throws Exception {
 
@@ -31,6 +28,8 @@ public class WordleDictionaryLoader {
         if (words.isEmpty()) {
             throw new RuntimeException("Словарь пуст");
         }
+
+        log.println("Словарь загружен. Количество слов: " + words.size());
 
         return new WordleDictionary(words);
     }
