@@ -1,10 +1,25 @@
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
-public record WordleDictionary(List<String> words) {
+public class WordleDictionary {
+
+    private final List<String> words;
+    private final Set<String> wordSet;
+
+    public WordleDictionary(List<String> words) {
+
+        this.words = words;
+        this.wordSet = new HashSet<>(words); // быстрый поиск
+    }
+
+    public List<String> getWords() {
+        return words;
+    }
 
     public boolean contains(String word) {
-        return words.contains(word);
+        return wordSet.contains(word);
     }
 
     public String randomWord() {
@@ -17,44 +32,21 @@ public record WordleDictionary(List<String> words) {
 
     public static String compareWords(String answer, String guess) {
 
-        StringBuilder result = new StringBuilder("-----");
+        StringBuilder result = new StringBuilder();
 
-        boolean[] used = new boolean[answer.length()];
-
-        // сначала ищем точные совпадения
         for (int i = 0; i < guess.length(); i++) {
-
-            if (guess.charAt(i) == answer.charAt(i)) {
-
-                result.setCharAt(i, '+');
-                used[i] = true;
-            }
-        }
-
-        // затем ищем буквы на других позициях
-        for (int i = 0; i < guess.length(); i++) {
-
-            if (result.charAt(i) == '+') {
-                continue;
-            }
 
             char g = guess.charAt(i);
 
-            for (int j = 0; j < answer.length(); j++) {
-
-                if (!used[j] && answer.charAt(j) == g) {
-
-                    result.setCharAt(i, '^');
-                    used[j] = true;
-                    break;
-                }
+            if (g == answer.charAt(i)) {
+                result.append("+");
+            } else if (answer.indexOf(g) >= 0) {
+                result.append("^");
+            } else {
+                result.append("-");
             }
         }
 
         return result.toString();
-    }
-
-    public List<String> getWords() {
-        return List.of();
     }
 }
