@@ -53,4 +53,8 @@ public record WordleDictionary(List<String> words) {
 
         return result.toString();
     }
+
+    public List<String> getWords() {
+        return List.of();
+    }
 }

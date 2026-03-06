@@ -4,21 +4,29 @@ import java.util.Random;
 
 public class WordleGame {
 
+    private static final int MAX_ATTEMPTS = 6;
+
     private final WordleDictionary dictionary;
+    private final PrintWriter log;
 
     private final String answer;
-    private int attempts = 6;
+    private int attempts;
 
     public WordleGame(WordleDictionary dictionary, PrintWriter log) {
 
         this.dictionary = dictionary;
+        this.log = log;
 
-        List<String> words = dictionary.words();
+        this.attempts = MAX_ATTEMPTS;
+
+        List<String> words = dictionary.getWords();
         Random random = new Random();
 
         this.answer = words.get(random.nextInt(words.size()));
 
-        log.println("Ответ игры: " + answer);
+        log.println("Новая игра началась");
+        log.println("Количество попыток: " + MAX_ATTEMPTS);
+        log.println("Загаданное слово: " + answer);
     }
 
     public boolean isFinished() {
@@ -44,8 +52,12 @@ public class WordleGame {
 
         attempts--;
 
+        log.println("Попытка игрока: " + guess);
+        log.println("Осталось попыток: " + attempts);
+
         if (guess.equals(answer)) {
             attempts = 0;
+            log.println("Игрок угадал слово");
             return "+++++";
         }
 
