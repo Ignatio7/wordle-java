@@ -1,60 +1,68 @@
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
-public record WordleDictionary(List<String> words) {
+public class WordleDictionary {
+
+    private final List<String> words;
+    private final Set<String> wordSet;
+    private final Random random = new Random();
+
+    public WordleDictionary(List<String> words) {
+        this.words = words;
+        this.wordSet = new HashSet<>(words);
+    }
+
+    public List<String> getWords() {
+        return words;
+    }
 
     public boolean contains(String word) {
-        return words.contains(word);
+        return wordSet.contains(word);
     }
 
     public String randomWord() {
-        return words.get(new Random().nextInt(words.size()));
-    }
-
-    public String normalize(String word) {
-        return word.toLowerCase().replace('ё', 'е');
+        return words.get(random.nextInt(words.size()));
     }
 
     public static String compareWords(String answer, String guess) {
 
-        StringBuilder result = new StringBuilder("-----");
+        StringBuilder comparisonResult = new StringBuilder("-----");
 
-        boolean[] used = new boolean[answer.length()];
+        boolean[] usedAnswerLetters = new boolean[answer.length()];
 
-        // сначала ищем точные совпадения
-        for (int i = 0; i < guess.length(); i++) {
+        // ищем буквы на правильных позициях
+        for (int guessIndex = 0; guessIndex < guess.length(); guessIndex++) {
 
-            if (guess.charAt(i) == answer.charAt(i)) {
+            if (guess.charAt(guessIndex) == answer.charAt(guessIndex)) {
 
-                result.setCharAt(i, '+');
-                used[i] = true;
+                comparisonResult.setCharAt(guessIndex, '+');
+                usedAnswerLetters[guessIndex] = true;
             }
         }
 
-        // затем ищем буквы на других позициях
-        for (int i = 0; i < guess.length(); i++) {
+        // ищем буквы на других позициях
+        for (int guessIndex = 0; guessIndex < guess.length(); guessIndex++) {
 
-            if (result.charAt(i) == '+') {
+            if (comparisonResult.charAt(guessIndex) == '+') {
                 continue;
             }
 
-            char g = guess.charAt(i);
+            char guessedLetter = guess.charAt(guessIndex);
 
-            for (int j = 0; j < answer.length(); j++) {
+            for (int answerIndex = 0; answerIndex < answer.length(); answerIndex++) {
 
-                if (!used[j] && answer.charAt(j) == g) {
+                if (!usedAnswerLetters[answerIndex]
+                        && answer.charAt(answerIndex) == guessedLetter) {
 
-                    result.setCharAt(i, '^');
-                    used[j] = true;
+                    comparisonResult.setCharAt(guessIndex, '^');
+                    usedAnswerLetters[answerIndex] = true;
                     break;
                 }
             }
         }
 
-        return result.toString();
-    }
-
-    public List<String> getWords() {
-        return List.of();
+        return comparisonResult.toString();
     }
 }
