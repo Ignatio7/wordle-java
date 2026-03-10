@@ -7,11 +7,11 @@ public class WordleDictionary {
 
     private final List<String> words;
     private final Set<String> wordSet;
+    private final Random random = new Random();
 
     public WordleDictionary(List<String> words) {
-
         this.words = words;
-        this.wordSet = new HashSet<>(words); // быстрый поиск
+        this.wordSet = new HashSet<>(words);
     }
 
     public List<String> getWords() {
@@ -23,30 +23,46 @@ public class WordleDictionary {
     }
 
     public String randomWord() {
-        return words.get(new Random().nextInt(words.size()));
-    }
-
-    public String normalize(String word) {
-        return word.toLowerCase().replace('ё', 'е');
+        return words.get(random.nextInt(words.size()));
     }
 
     public static String compareWords(String answer, String guess) {
 
-        StringBuilder result = new StringBuilder();
+        StringBuilder comparisonResult = new StringBuilder("-----");
 
-        for (int i = 0; i < guess.length(); i++) {
+        boolean[] usedAnswerLetters = new boolean[answer.length()];
 
-            char g = guess.charAt(i);
+        // ищем буквы на правильных позициях
+        for (int guessIndex = 0; guessIndex < guess.length(); guessIndex++) {
 
-            if (g == answer.charAt(i)) {
-                result.append("+");
-            } else if (answer.indexOf(g) >= 0) {
-                result.append("^");
-            } else {
-                result.append("-");
+            if (guess.charAt(guessIndex) == answer.charAt(guessIndex)) {
+
+                comparisonResult.setCharAt(guessIndex, '+');
+                usedAnswerLetters[guessIndex] = true;
             }
         }
 
-        return result.toString();
+        // ищем буквы на других позициях
+        for (int guessIndex = 0; guessIndex < guess.length(); guessIndex++) {
+
+            if (comparisonResult.charAt(guessIndex) == '+') {
+                continue;
+            }
+
+            char guessedLetter = guess.charAt(guessIndex);
+
+            for (int answerIndex = 0; answerIndex < answer.length(); answerIndex++) {
+
+                if (!usedAnswerLetters[answerIndex]
+                        && answer.charAt(answerIndex) == guessedLetter) {
+
+                    comparisonResult.setCharAt(guessIndex, '^');
+                    usedAnswerLetters[answerIndex] = true;
+                    break;
+                }
+            }
+        }
+
+        return comparisonResult.toString();
     }
 }
